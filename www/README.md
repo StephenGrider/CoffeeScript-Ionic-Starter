@@ -4,7 +4,6 @@ CoffeeScript Ionic Starter
 Starting point for developing Ionic apps with coffeescript.
 
 
-***
 
 Getting Started
 ---
