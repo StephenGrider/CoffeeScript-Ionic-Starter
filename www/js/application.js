@@ -1,4 +1,4 @@
-angular.module("starter", ["ionic", "starter.controllers", "starter.services"]).run(function($ionicPlatform) {
+angular.module('starter', ['ionic', 'starter.controllers']).run(function($ionicPlatform) {
   return $ionicPlatform.ready(function() {
     if (window.cordova && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
@@ -8,75 +8,84 @@ angular.module("starter", ["ionic", "starter.controllers", "starter.services"]).
     }
   });
 }).config(function($stateProvider, $urlRouterProvider) {
-  $stateProvider.state("tab", {
-    url: "/tab",
+  $stateProvider.state('app', {
+    url: '/app',
     abstract: true,
-    templateUrl: "templates/tabs.html"
-  }).state("tab.dash", {
-    url: "/dash",
+    templateUrl: 'templates/menu.html',
+    controller: 'AppCtrl'
+  }).state('app.search', {
+    url: '/search',
     views: {
-      "tab-dash": {
-        templateUrl: "templates/tab-dash.html",
-        controller: "DashCtrl"
+      menuContent: {
+        templateUrl: 'templates/search.html'
       }
     }
-  }).state("tab.friends", {
-    url: "/friends",
+  }).state('app.browse', {
+    url: '/browse',
     views: {
-      "tab-friends": {
-        templateUrl: "templates/tab-friends.html",
-        controller: "FriendsCtrl"
+      menuContent: {
+        templateUrl: 'templates/browse.html'
       }
     }
-  }).state("tab.friend-detail", {
-    url: "/friend/:friendId",
+  }).state('app.playlists', {
+    url: '/playlists',
     views: {
-      "tab-friends": {
-        templateUrl: "templates/friend-detail.html",
-        controller: "FriendDetailCtrl"
+      menuContent: {
+        templateUrl: 'templates/playlists.html',
+        controller: 'PlaylistsCtrl'
       }
     }
-  }).state("tab.account", {
-    url: "/account",
+  }).state('app.single', {
+    url: '/playlists/:playlistId',
     views: {
-      "tab-account": {
-        templateUrl: "templates/tab-account.html",
-        controller: "AccountCtrl"
+      menuContent: {
+        templateUrl: 'templates/playlist.html',
+        controller: 'PlaylistCtrl'
       }
     }
   });
-  return $urlRouterProvider.otherwise("/tab/dash");
+  return $urlRouterProvider.otherwise('/app/playlists');
 });
 
-angular.module("starter.controllers", []).controller("DashCtrl", function($scope) {}).controller("FriendsCtrl", function($scope, Friends) {
-  return $scope.friends = Friends.all();
-}).controller("FriendDetailCtrl", function($scope, $stateParams, Friends) {
-  return $scope.friend = Friends.get($stateParams.friendId);
-}).controller("AccountCtrl", function($scope) {});
-
-angular.module("starter.services", []).factory("Friends", function() {
-  var friends;
-  friends = [
+angular.module('starter.controllers', []).controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+  $scope.loginData = {};
+  $ionicModal.fromTemplateUrl('templates/login.html', {
+    scope: $scope
+  }).then(function(modal) {
+    return $scope.modal = modal;
+  });
+  $scope.closeLogin = function() {
+    return $scope.modal.hide();
+  };
+  $scope.login = function() {
+    return $scope.modal.show();
+  };
+  return $scope.doLogin = function() {
+    console.log('Doing login', $scope.loginData);
+    return $timeout((function() {
+      return $scope.closeLogin();
+    }), 1000);
+  };
+}).controller('PlaylistsCtrl', function($scope) {
+  return $scope.playlists = [
     {
-      id: 0,
-      name: "Scruff McGruff"
+      title: 'Reggae',
+      id: 1
     }, {
-      id: 1,
-      name: "G.I. Joe"
+      title: 'Chill',
+      id: 2
     }, {
-      id: 2,
-      name: "Miss Frizzle"
+      title: 'Dubstep',
+      id: 3
     }, {
-      id: 3,
-      name: "Ash Ketchum"
+      title: 'Indie',
+      id: 4
+    }, {
+      title: 'Rap',
+      id: 5
+    }, {
+      title: 'Cowbell',
+      id: 6
     }
   ];
-  return {
-    all: function() {
-      return friends;
-    },
-    get: function(friendId) {
-      return friends[friendId];
-    }
-  };
-});
+}).controller('PlaylistCtrl', function($scope, $stateParams) {});
